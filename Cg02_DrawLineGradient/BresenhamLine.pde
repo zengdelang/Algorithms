@@ -1,7 +1,7 @@
 public class BresenhamLine
 {
     /*
-          使用直线中点Bresenham算法来画s线
+          使用直线中点Bresenham算法来画线
      */
     public void drawLine(int x1, int y1, int x2, int y2, float r1, float g1, float b1, float r2, float g2, float b2)
     {
