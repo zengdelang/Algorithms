@@ -9,6 +9,51 @@ public class Point
         y = _y;
     }
 }
+ 
+/*
+   多边形的有效边
+*/
+public class Edge
+{
+    public double x;         //活动边最小y坐标的顶点的x坐标
+    public int    yMax;      //边的最大y坐标
+    public double k;         //边的斜率的倒数
+    
+    public Edge nextEdge; //下一条边
+    
+    public Edge()
+    {
+       
+    }
+    
+    public Edge(double _x, int _yMax, double _k)
+    {
+        x    = _x;
+        yMax = _yMax;
+        k    =_k;
+    }
+}
+
+/*
+   扫描线对应的桶
+*/
+public class Bucket
+{
+    public int    scanLine;  //对应的扫描线
+    public Edge   firstEdge;
+    public Bucket nextBucket;
+    
+    public Bucket(int _scanLine, Edge edge)
+    {
+        scanLine = _scanLine;
+        firstEdge = edge;
+    }
+    
+    public Bucket()
+    {
+      
+    }
+}
 
 public class Polygon
 {
@@ -19,7 +64,7 @@ public class Polygon
         points = _points;
     }
     
-    public void render()
+    public void Render()
     {
         for(int i = 0; i < points.length; ++i)
         {
@@ -28,22 +73,11 @@ public class Polygon
         }
     }
     
-    /*
-        创造扫描线的桶
-    */
-    private ScanLineBucket[] CreateBuckets(int yMin, int yMax)
+    private Bucket CreateBuckets()
     {
-        ScanLineBucket[] buckets = new ScanLineBucket[yMax - yMin+1];     
-        for(int i = 0; i < buckets.length; ++i)
-        {
-            buckets[i] = new ScanLineBucket(i);
-        }
-        println(buckets.length);
-        return buckets;
-    }
-    
-    private void CreateScanLineEdgeTable(ScanLineBucket[] buckets, int yMin)
-    {
+        //创建扫描线的桶链表的头结点
+        Bucket buckets = new Bucket();  
+        //遍历所有多边形的点
         for(int i = 0; i < points.length; ++i)
         {
             Point nextPoints = points[(i + 1) % points.length];
@@ -56,37 +90,54 @@ public class Polygon
             Point highPoint = nextPoints.y > points[i].y ? nextPoints : points[i];  //y坐标更大的点
             Point lowPoint  = nextPoints.y > points[i].y ? points[i] : nextPoints;  //y坐标更小的点
           
-            int scanLine = lowPoint.y - yMin;
-            PolygonEdge edge = new PolygonEdge(lowPoint.x, highPoint.y, (highPoint.x - lowPoint.x)/(double)(highPoint.y - lowPoint.y));
-            edge.nextEdge = buckets[scanLine].firstEdge;
-            buckets[scanLine].firstEdge = edge;
+            Edge edge = new Edge(lowPoint.x, highPoint.y, (highPoint.x - lowPoint.x)/(double)(highPoint.y - lowPoint.y));
+            AddEdgeToBucket(buckets, edge, lowPoint.y);
         }
-/*        
-        PolygonEdge e = buckets[0].firstEdge;
-        while(e != null)
+        return buckets;
+    }
+    
+    //使用插入排序创建桶
+    private void AddEdgeToBucket(Bucket buckets, Edge edge, int scanLine)
+    {
+        Bucket prevBucket = buckets;
+        Bucket curBucket  = buckets.nextBucket;
+        while(curBucket != null)
         {
-           println(e.x +" ====  "+e.k);
-           e = e.nextEdge;
-        }*/
+            //扫描线和桶的扫描线相同
+            if(curBucket.scanLine == scanLine)
+            {
+                edge.nextEdge = curBucket.firstEdge;
+                curBucket.firstEdge = edge;
+                return;
+            }
+            else if(scanLine < curBucket.scanLine)  //如果新边的x比当前边小，插入到当前边之前
+            {
+                break;
+            }
+
+            prevBucket = curBucket;
+            curBucket  = curBucket.nextBucket;
+       }
+                
+       Bucket tempBucket = new Bucket(scanLine,edge);
+       tempBucket.nextBucket = prevBucket.nextBucket;
+       prevBucket.nextBucket = tempBucket;
     }
     
     //添加有效活动边到有效活动边表中
-    private void AddActiveEdgeToET(PolygonEdge headNode, PolygonEdge newEdge)
-    {      
+    private void AddActiveEdgeToET(Edge headNode, Edge newEdge)
+    {   
         //使用插入排序，先按照边的x从小到大排序，如果x相同，再按照k的从小到大排序
         //headNode的有效边表已经是有序的
         while(newEdge != null)
         {
-            PolygonEdge prevEdge = headNode;
-            PolygonEdge curEdge  = headNode.nextEdge;
-           // println(newEdge.x+"++++++"+newEdge.k+"------"+(curEdge != null));
+            Edge prevEdge = headNode;
+            Edge curEdge  = headNode.nextEdge;
             while(curEdge != null)
             {
-                //println("====="+curEdge.k);
                 //如果两条边的x相同
                 if(newEdge.x == curEdge.x)
                 {
-                    //println(newEdge.x+"==="+newEdge.k);   
                     if(newEdge.k <= curEdge.k)
                     {
                         break;
@@ -101,21 +152,19 @@ public class Polygon
                 curEdge = curEdge.nextEdge;
             }
                 
-            PolygonEdge tempEdge = newEdge;
+            Edge tempEdge = newEdge;
             newEdge = newEdge.nextEdge;
             tempEdge.nextEdge = prevEdge.nextEdge;
             prevEdge.nextEdge = tempEdge;
         }
-        
-
     }
     
     //刷新有效活动边表，删除非活动边，递增x
-    void RefreshAET(PolygonEdge headNode, int yMax)
+    private void RefreshAET(Edge headNode, int yMax)
     {
-        PolygonEdge prevEdge = headNode;
-        PolygonEdge curEdge  = headNode.nextEdge;
-        
+        Edge prevEdge = headNode;
+        Edge curEdge  = headNode.nextEdge;
+      
         while(curEdge != null)
         {
             if(curEdge.yMax == yMax)
@@ -128,16 +177,6 @@ public class Polygon
                 prevEdge = curEdge;
             }
             curEdge = curEdge.nextEdge;
-        }
-        
-        if(yMax == 6)
-        {
-           PolygonEdge e = headNode.nextEdge;
-            while(e != null)
-            {
-               println(e.x +" ===============================  "+e.k);
-               e = e.nextEdge;
-            }
         }
     }
     
@@ -165,50 +204,38 @@ public class Polygon
         /*
             第二步 根据扫描线来创建扫描线的边表桶
         */
-        ScanLineBucket[] buckets = CreateBuckets(yMin, yMax);
+        Bucket buckets = CreateBuckets();
         
         /*
-            第三步 初始化所有边，生成每一个桶对应的边表
+            第三步 从下到上遍历所有扫描线
         */
-        CreateScanLineEdgeTable(buckets, yMin);
-        
-        /*
-            第四部 遍历整个桶，也就是从第一条扫描线到最后一条扫描遍历
-        */
-        PolygonEdge headNode = new PolygonEdge();  //生成有效边表的头结点
-        for(int y = 0; y < buckets.length; ++y)
+        Edge headNode = new Edge();       //生成有效边表的头结点
+        buckets = buckets.nextBucket;     //获取边表桶的首元结点
+        stroke(255,0,0);                  //设置填充颜色
+        for(int y = yMin; y <= yMax; ++y)
         {
-            if(buckets[y].firstEdge != null)
+            if(buckets != null && buckets.scanLine == y)
             {
-                AddActiveEdgeToET(headNode, buckets[y].firstEdge);
+                AddActiveEdgeToET(headNode, buckets.firstEdge);
+                buckets = buckets.nextBucket;
             }
             
-            boolean fillNow = false; //是否立刻填充像素点
+            boolean fillNow = false;         //是否立刻填充像素点
             double startX = 0, endX = 0;     //待填充的起点和终点
-            PolygonEdge curEdge = headNode.nextEdge;
-            if(y == 6)
-            {
-                {
-                   PolygonEdge e = headNode.nextEdge;
-                    while(e != null)
-                    {
-                       println(e.x +" ***************************************  "+e.k);
-                       e = e.nextEdge;
-                    }
-                }
-            }
+            Edge curEdge = headNode.nextEdge;
             while(curEdge != null)
             {
                 if(fillNow)
                 {
                     endX = curEdge.x - 1; //左闭右开
-                    stroke(255,0,0);
-                   // println(startX +"  "+ endX+" ++++++++"+y);
+                    if(startX < endX)
+                        line((float)startX, (float)(y),(float)endX,(float)(y));
+                    /*//使用point一个一个设置像素，效率较低
                     for(double x = startX; x <= endX; ++x)
                     {
                         //四舍五入x
-                        point((int)(x + 0.5), y + yMin);
-                    }
+                        point((int)(x + 0.5), y);
+                    }*/
                 }
                 else
                 {
@@ -222,43 +249,5 @@ public class Polygon
             //根据下闭上开原则，将yMax == y + 1的边去除
             RefreshAET(headNode, y + 1);
         }
-    }
-}
-
-/*
-   多边形的有效边
-*/
-public class PolygonEdge
-{
-    public double x;         //活动边最小y坐标的顶点的x坐标
-    public int    yMax;      //边的最大y坐标
-    public double k;         //边的斜率的倒数
-    
-    public PolygonEdge nextEdge; //下一条边
-    
-    public PolygonEdge()
-    {
-       
-    }
-    
-    public PolygonEdge(double _x, int _yMax, double _k)
-    {
-        x    = _x;
-        yMax = _yMax;
-        k    =_k;
-    }
-}
-
-/*
-   多边形的扫描线对应的桶，桶是一个链表包含边的最小y值与扫描线相同的边
-*/
-public class ScanLineBucket
-{
-    public int         scanLine;  //桶对应的扫描线，第yMin的扫描线对应0， 第yMin+1扫描线对应1， 以此类推
-    public PolygonEdge firstEdge; //第一条有效边的引用
-    
-    public ScanLineBucket(int _scanLine)
-    {
-        scanLine = _scanLine;
     }
 }
