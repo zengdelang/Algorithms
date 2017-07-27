@@ -1,4 +1,3 @@
-//有效边表多边形填充算法填充多边形Polygon polygon;
 int scale = 30;
 
 Polygon polygon;
