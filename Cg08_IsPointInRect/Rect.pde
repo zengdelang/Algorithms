@@ -125,6 +125,7 @@ public class Rect
     //如果矩形旋转还可以使用的方法是建立一个新的坐标系，可以以矩形中心为中点，x轴和y
     //轴平行于矩形的边建立坐标系，利用矩阵把点转化道该坐标系中，然后就可以使用
     //IsPointInRect和IsPointInRect1中的方法
+    //叉积可用于判断大多数普通的多边形点是否在其中的问题
     public boolean IsPointInRect2(int x, int y)
     {   
         /*
@@ -149,7 +150,7 @@ public class Rect
         int x4 = point3.x - x;
         int y4 = point3.y - y;
         
-        //计算叉积
+        //计算叉积，不要直接将(x1 * y2 - x2 * y1)和(x4 * y3 - x3 * y4)相乘再判断是否>=0有可能越界
         boolean cp1 = (x1 * y2 - x2 * y1) >= 0 && (x4 * y3 - x3 * y4) >=0;
              
         //Vector5 代表 topRightPoint - p
