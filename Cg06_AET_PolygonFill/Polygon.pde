@@ -66,10 +66,11 @@ public class Polygon
     
     public void Render()
     {
+        int lastPoint = points.length -1;
         for(int i = 0; i < points.length; ++i)
         {
-            Point nextPoints = points[(i + 1) % points.length];
-            line(points[i].x, points[i].y, nextPoints.x, nextPoints.y);
+            line(points[lastPoint].x, points[lastPoint].y ,points[i].x, points[i].y);
+            lastPoint = i;
         }
     }
     
@@ -77,18 +78,21 @@ public class Polygon
     {
         //创建扫描线的桶链表的头结点
         Bucket buckets = new Bucket();  
+        
         //遍历所有多边形的点
+        int lastPointIndex = points.length -1;
         for(int i = 0; i < points.length; ++i)
         {
-            Point nextPoints = points[(i + 1) % points.length];
+            Point lastPoint = points[lastPointIndex];
+            lastPointIndex = i;
             //水平边和扫描线有很多交点，故当作扫描线忽略不加入边表
-            if(nextPoints.y == points[i].y)
+            if(lastPoint.y == points[i].y)
             {
                 continue;
             }
             
-            Point highPoint = nextPoints.y > points[i].y ? nextPoints : points[i];  //y坐标更大的点
-            Point lowPoint  = nextPoints.y > points[i].y ? points[i] : nextPoints;  //y坐标更小的点
+            Point highPoint = lastPoint.y > points[i].y ? lastPoint : points[i];  //y坐标更大的点
+            Point lowPoint  = lastPoint.y > points[i].y ? points[i] : lastPoint;  //y坐标更小的点
           
             Edge edge = new Edge(lowPoint.x, highPoint.y, (highPoint.x - lowPoint.x)/(double)(highPoint.y - lowPoint.y));
             AddEdgeToBucket(buckets, edge, lowPoint.y);
