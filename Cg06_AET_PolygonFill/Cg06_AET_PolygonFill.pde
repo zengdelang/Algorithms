@@ -30,13 +30,13 @@ void setup()
 
 void draw()
 {
+    polygon.FillPolygon();
     stroke(0);
     polygon.Render();
-    polygon.FillPolygon();
-   
+    
+    polygon1.FillPolygon();
     stroke(0);
     polygon1.Render();
-    polygon1.FillPolygon();
   
     noLoop();
 }
