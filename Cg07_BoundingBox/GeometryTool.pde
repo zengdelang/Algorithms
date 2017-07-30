@@ -30,7 +30,7 @@ public class GeometryTool
         _x1 = _x2 = points[0].x;
         _y1 = _y2 = points[0].y;
         
-        for(int i = 0; i < points.length; ++i)
+        for(int i = 1; i < points.length; ++i)
         {
             Point point = points[i];
  
