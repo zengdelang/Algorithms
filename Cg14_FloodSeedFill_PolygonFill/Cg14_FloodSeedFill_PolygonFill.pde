@@ -46,12 +46,12 @@ void draw()
     
     if(fillDir4)
     {
-        polygon.FillPolygon(181,265, 255, 255, 255, 122, 222, 255, false);
+        polygon.FillPolygon(181,265, color(255,255,255), color(122, 222, 255), false);
     }
     
     if(fillDir8)
     {
-        polygon.FillPolygon(181,265, 255, 255, 255, 122, 222, 255, true);
+        polygon.FillPolygon(181,265, color(255, 255, 255), color(122, 222, 255), true);
     }
 }
 
