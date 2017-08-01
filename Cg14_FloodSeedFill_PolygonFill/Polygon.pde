@@ -30,7 +30,7 @@ public class Polygon
     }
     
     //注入填充算法填充多边形
-    public void FillPolygon(int seedX, int seedY, int oldColorR, int oldColorG, int oldColorB, int newColorR, int newColorG, int newColorB, boolean isDir8)
+    public void FillPolygon(int seedX, int seedY, color oldColor, color newColor, boolean isDir8)
     {
         Point[] dir_8 = new Point[8];
         dir_8[0] = new Point(0,-1);
@@ -47,7 +47,7 @@ public class Polygon
         
         loadPixels(); //获取显示窗口的像素
         
-        if(IsOldColor(seedX, seedY, oldColorR, oldColorG, oldColorB))
+        if(IsOldColor(seedX, seedY, oldColor))
         {
              stack.add(new Point(seedX, seedY));  
         }
@@ -57,11 +57,11 @@ public class Polygon
         {
             Point p = stack.get(stack.size() -1);
             stack.remove(stack.size() -1);
-            SetNewColor(p.x, p.y, newColorR, newColorG, newColorB);
+            SetNewColor(p.x, p.y, newColor);
             
             for(int i = 0; i < dirLength; ++i)
             {
-               if(IsOldColor(p.x + dir_8[i].x, p.y + dir_8[i].y, oldColorR, oldColorG, oldColorB))
+               if(IsOldColor(p.x + dir_8[i].x, p.y + dir_8[i].y, oldColor))
                {
                    stack.add(new Point(p.x + dir_8[i].x, p.y + dir_8[i].y));
                }
@@ -71,7 +71,7 @@ public class Polygon
         updatePixels();
     }
     
-    private boolean IsOldColor(int x, int y, int oldColorR, int oldColorG, int oldColorB)
+    private boolean IsOldColor(int x, int y, color oldColor)
     {
         //显示窗口的宽度，用于操纵显示窗口的像素值
         int displayWindowWidth = 1000;
@@ -79,7 +79,7 @@ public class Polygon
         int index = displayWindowWidth * y + x;
         if(index < pixels.length && index >= 0)
         {
-            if(red(pixels[index]) == oldColorR && green(pixels[index]) == oldColorG && blue(pixels[index]) == oldColorB)
+            if(pixels[index] == oldColor)
             {
                return true; 
             }
@@ -87,7 +87,7 @@ public class Polygon
         return false;
     }
     
-    private void SetNewColor(int x, int y, int newColorR, int newColorG, int newColorB)
+    private void SetNewColor(int x, int y, color newColor)
     {
         //显示窗口的宽度，用于操纵显示窗口的像素值
         int displayWindowWidth = 1000;
@@ -95,7 +95,7 @@ public class Polygon
         int index = displayWindowWidth * y + x;
         if(index < pixels.length && index >= 0)
         {
-            pixels[index] = color(newColorR, newColorG, newColorB);
+            pixels[index] = newColor;
         }
     }
 }
