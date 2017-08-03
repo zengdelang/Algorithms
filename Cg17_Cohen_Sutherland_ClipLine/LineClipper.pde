@@ -12,8 +12,7 @@ public class LineClipper
         byte regionCode2 = getRegionCode(lineInfo.x2, lineInfo.y2, xMin, yMin, xMax, yMax);
 
         while(true)
-        {
-            boolean change = false;                     
+        {                  
             if((regionCode1 | regionCode2) == 0)        //简取
             {
                 return lineInfo;
@@ -37,22 +36,22 @@ public class LineClipper
                 byte rc = regionCode1;
                 regionCode1 = regionCode2;
                 regionCode2 = rc;
-           }
+            }
                 
             if((regionCode1 & Left) > 0)
             {
                 lineInfo.y1 = GetPointY(xMin, lineInfo.x1, lineInfo.y1, lineInfo.x2, lineInfo.y2);
                 lineInfo.x1 = xMin;
                 regionCode1 = getRegionCode(lineInfo.x1, lineInfo.y1, xMin, yMin, xMax, yMax);
-                change = true;
+                continue;
             }
-                
+
             if((regionCode1 & Right) > 0)
             {
                 lineInfo.y1 = GetPointY(xMax, lineInfo.x1, lineInfo.y1, lineInfo.x2, lineInfo.y2);
                 lineInfo.x1 = xMax;
                 regionCode1 = getRegionCode(lineInfo.x1, lineInfo.y1, xMin, yMin, xMax, yMax);
-                change = true;
+                continue;
             }
                 
             if((regionCode1 & Bottom) > 0)
@@ -60,7 +59,7 @@ public class LineClipper
                 lineInfo.x1 = GetPointX(yMin, lineInfo.x1, lineInfo.y1, lineInfo.x2, lineInfo.y2);
                 lineInfo.y1 = yMin;
                 regionCode1 = getRegionCode(lineInfo.x1, lineInfo.y1, xMin, yMin, xMax, yMax);
-                change = true;
+                continue;
             }
                 
             if((regionCode1 & Top) > 0)
@@ -68,11 +67,10 @@ public class LineClipper
                 lineInfo.x1 = GetPointX(yMax, lineInfo.x1, lineInfo.y1, lineInfo.x2, lineInfo.y2);
                 lineInfo.y1 = yMax;
                 regionCode1 = getRegionCode(lineInfo.x1, lineInfo.y1, xMin, yMin, xMax, yMax);
-                change = true;
+                continue;
             }
                 
-            if(!change)
-                break;
+            break;
         }
         
         return null;
