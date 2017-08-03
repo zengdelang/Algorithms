@@ -39,11 +39,18 @@ public class LineClipper
                 {
                     lineInfo.x2 = midX;
                     lineInfo.y2 = midY;
+                    regionCode2 = regionCode;
                 }
                 else
                 {
                     lineInfo.x1 = midX;
                     lineInfo.y1 = midY;
+                    regionCode1 = regionCode;
+                }
+                
+                if((regionCode1 & regionCode2) != 0 )  //简弃
+                {
+                    return null;
                 }
                 
                 midX = (lineInfo.x1 + lineInfo.x2) * 0.5;
