@@ -21,7 +21,7 @@ public class LineClipper
         
         for(int i = 0; i < 4; ++i)
         {
-            if(p[i] == 0 && p[i] < 0)
+            if(p[i] == 0 && q[i] < 0)
             {
                 return null;
             }
@@ -46,7 +46,7 @@ public class LineClipper
                 }
             }
         }
-
+        
         lineInfo.x1 = line.x1 - t1 * p[0];
         lineInfo.y1 = line.y1 - t1 * p[2];
         lineInfo.x2 = line.x1 - t2 * p[0];
