@@ -9,7 +9,7 @@ public class Triangle
     public float x3;
     public float y3;
     
-    public int mode = 4;  //1 画重心   2 画外心  3 画内心 4 画垂心
+    public int mode = 0;  //1 画重心   2 画外心  3 画内心 4 画垂心
     CircleAnimation circleAnimation;
     
     public Triangle(float _x1, float _y1, float _x2, float _y2, float _x3, float _y3)
