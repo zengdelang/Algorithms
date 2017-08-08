@@ -17,7 +17,10 @@ void draw()
 
 void mousePressed()
 {
-    lineWorker.receiveMouseInput();
+    if(triangle.mode == 4)
+    {
+        lineWorker.receiveMouseInput();   
+    }
 }
 
 void keyPressed()
@@ -27,6 +30,11 @@ void keyPressed()
         if (key == 'C' || key == 'c')
         {
             lineWorker.clear();
+        }
+        
+        if(key == 'M' || key == 'm')
+        {
+            triangle.mode = (++triangle.mode) % 5;        
         }
     } 
 }
