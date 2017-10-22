@@ -3,7 +3,7 @@ public class BezierTool
     //使用公式绘制二次贝塞尔曲线
     public void DrawBezier2(Point p1, Point p2, Point p3)
     {
-        int   n = (int)(p3.x - p1.x);
+        int   n = (int)abs(p3.x - p1.x);
         float delta = 1.0 / n;
         
         float x = p1.x;
@@ -34,7 +34,7 @@ public class BezierTool
     //使用公式绘制三次贝塞尔曲线
     public void DrawBezier3(Point p1, Point p2, Point p3, Point p4)
     {
-        int   n = (int)(p4.x - p1.x);
+        int   n = (int)abs(p4.x - p1.x);
         float delta = 1.0 / n;
         
         float x = p1.x;
@@ -77,25 +77,25 @@ public class BezierTool
         float y = points.get(0).y;
         float _x, _y;
         
-        int   len = (int)(points.get(points.size()-1).x - x);
+        int   len = (int)abs(points.get(points.size()-1).x - x);
         float delta = 1.0 / len;
         float t = 0;
-        
+
         for(int k = 1; k <= len; ++k)
         {
             t += delta;
             for(int i = 1; i < n; ++i)  
-            {  
+            {
                 for(int j = 0; j < n - i; ++j)  
-                {  
+                {
                     if(i == 1) // i==1时,第一次迭代,由已知控制点计算  
-                    {  
+                    {
                         xArray[j] = points.get(j).x * (1 - t) + points.get(j + 1).x * t;  
                         yArray[j] = points.get(j).y * (1 - t) + points.get(j + 1).y * t;
-                        continue;  
-                    }  
-  
-                    // i != 1时,通过上一次迭代的结果计算  
+                        continue;
+                    }
+
+                    // i != 1时,通过上一次迭代的结果计算
                     xArray[j] = xArray[j] * (1 - t) + xArray[j + 1] * t;  
                     yArray[j] = yArray[j] * (1 - t) + yArray[j + 1] * t;  
                 }  
