@@ -6,7 +6,7 @@ public class BSplineCurveTool
     //使用公式绘制二次B样条曲线
     public void DrawBSplineCurve(Point p1, Point p2, Point p3)
     {
-        int   n = (int)(p3.x - p1.x);
+        int   n = (int)abs(p3.x - p1.x);
         float delta = 1.0 / n;
         
         float x = p1.x;
@@ -46,7 +46,7 @@ public class BSplineCurveTool
      //使用公式绘制三次B样条曲线
     public void DrawBSplineCurve3(Point p1, Point p2, Point p3, Point p4)
     {
-        int   n = (int)(p4.x - p1.x);
+        int   n = (int)abs(p4.x - p1.x);
         float delta = 1.0 / n;
         
         float x = p1.x;
