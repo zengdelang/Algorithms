@@ -2,7 +2,7 @@
 public class CubicSplineCurve
 {
     //绘制三次样条曲线
-    //points相邻的点不要重合且至少有2个点，当前没有处理相邻点重合的问题
+    //points相邻的点不要重合且至少有2个点，当前没有处理相邻点重合的问题，如果有重合的点会导致曲线绘制不出
     public void DrawCubicSplineCurve(Point[] points, int mode)
     {
         if(mode == 0)       //夹持端
